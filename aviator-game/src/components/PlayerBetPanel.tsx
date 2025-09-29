@@ -24,8 +24,8 @@ export function PlayerBetPanel() {
 
     const handleCancel = () => {
         if (!socket) return;
-
-        socket.emit("cancel_bet", { id: socket.id });
+        console.log('cancelando ', socket.id)
+        socket.emit("cancel_bet", { id_player: socket.id });
         setHasBet(false);
         setAmount(null);
     };

@@ -1,18 +1,18 @@
 .game-layout {
-  display: grid;
-  grid-template-areas:
-    "sidebar main"
-    "footer footer";
-  grid-template-columns: 300px 1fr; /* izquierda fija, derecha flexible */
-  grid-template-rows: 1fr auto;     /* juego ocupa todo, panel abajo */
-  height: 100vh; /* pantalla completa */
-  background: #121212; /* estilo dark */
+  height: 100vh;
+  background: #121212; 
   color: #fff;
+  display: grid;
+  display: grid;
+  grid-template-columns: 2fr 7fr 2fr;
+  grid-template-rows: 4fr 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
 }
 
 /* Columna izquierda */
 .bet-list {
-  grid-area: sidebar;
+  grid-area: 1 / 1 / 3 / 2;
   background: #1b1b1b;
   border-right: 2px solid #333;
   overflow-y: auto;
@@ -20,8 +20,7 @@
 
 /* Columna principal (RenderAviatorGame) */
 .game-board {
-  grid-area: main;
-  display: flex;
+  grid-area: 1 / 2 / 2 / 3;
   align-items: center;
   justify-content: center;
   background: radial-gradient(circle, #1c1c1c, #0d0d0d);
@@ -30,8 +29,15 @@
 
 /* Panel inferior de apuestas */
 .player-panel {
-  grid-area: footer;
-  background: #181818;
+  grid-area: 2 / 2 / 3 / 4; 
+  background: #d6c1c1;
   border-top: 2px solid #333;
   padding: 15px 20px;
+}
+
+.player-list{
+  grid-area: 1 / 3 / 2 / 4; 
+  background: #1b1b1b;
+  border-right: 2px solid #333;
+  overflow-y: auto;
 }
