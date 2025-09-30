@@ -12,6 +12,17 @@ export const connectSocket = () => {
 }
 
 export const getSocket = () => {
-  if (!socket) throw new Error("Socket no inicializado")
+  if (!socket) {
+    const username = localStorage.getItem("username")
+    if (username) {
+      const socket = connectSocket()
+      socket.connect()
+
+      socket.emit("join_game", {
+        username,
+        register_date: new Date().toISOString(),
+      })
+    }
+  }
   return socket
 }
