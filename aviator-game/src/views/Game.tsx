@@ -5,7 +5,7 @@ import { getSocket } from "../utils/socket-service";
 import { PrincipalBetList } from "../components/PrincipalBetList";
 import { RenderAviatorGame } from "../components/RenderAviatorGame";
 import { PlayerBetPanel } from "../components/PlayerBetPanel";
-import type { Bet, Player } from '../models/models';
+import type { Bet, GameSession, Player } from '../models/models';
 import PrincipalPlayerList from '../components/PrincipalPlayerList';
 
 
@@ -22,12 +22,13 @@ export default function Game() {
     const [isRunning, setIsRunning] = useState(false);
 
 
-    const [players, setPlayers] = useState<Player[]>([]);
+    const [players, setPlayers] = useState<GameSession[]>([]);
     const [bets, setBets] = useState<Bet[]>([]);
     
 
-    socket.on("players_update", (playersList: Player[]) => {
+    socket.on("players_update", (playersList: GameSession[]) => {
         setPlayers(playersList)
+        console.log('los jugadores', playersList)
     })
 
     socket.on("bets_update", (result) => {
@@ -48,7 +49,7 @@ export default function Game() {
 
                 <section className="player-list">
                     <PrincipalPlayerList
-                        players={players}
+                        gameSessions={players}
                     />
                 </section>
                 <aside className="bet-list">

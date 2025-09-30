@@ -58,24 +58,21 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
 
       ctx.clearRect(0, 0, canvas?.width ??0, canvas?.height ?? 0);
 
-      // fondo
       ctx.fillStyle = "#87CEEB";
       ctx.fillRect(0, 0, canvas?.width ?? 0, canvas?.height ?? 0);
 
-      // nubes
       drawCloud(ctx, 200, 100);
       drawCloud(ctx, 500, 150);
       drawCloud(ctx, 350, 80);
 
       if (isRunning && startTime.current !== null) {
-        const elapsed = (now - startTime.current) / 1000; // segundos
-        const newMultiplier = 1 + elapsed * 0.91; // 
+        const elapsed = (now - startTime.current) / 1000; 
+        const newMultiplier = 1 + elapsed * 0.91;
         setMultiplier(Number(newMultiplier.toFixed(1)));
 
-        // actualizar target en base al multiplicador
         target.current = {
-          x: 50 + elapsed * 30, // velocidad horizontal
-          y: 500 - newMultiplier * 20, // altura
+          x: 50 + elapsed * 30, 
+          y: 500 - newMultiplier * 20, 
         };
       }
 

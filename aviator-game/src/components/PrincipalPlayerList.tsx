@@ -1,16 +1,17 @@
-import type { Player } from "../models/models";
+import type { GameSession } from "../models/models";
 import PlayerGameCard from "../shared/Cards/PlayerGameCard";
 
 interface PrincipalBetListProps {
-    players: Player[];
+    gameSessions: GameSession[];
 }
 
-export default function PrincipalPlayerList({ players }: PrincipalBetListProps) {
+export default function PrincipalPlayerList({ gameSessions }: PrincipalBetListProps) {
+    console.log('el game session', gameSessions)
     return (
         <>
-            {players.map((player) =>( 
+            {gameSessions.map((gameSession) =>( 
                 <PlayerGameCard
-                    player={player}
+                    player={gameSession.player}
                 />
             ))
             }
