@@ -27,7 +27,6 @@ export default function Game() {
     
 
     socket.on("players_update", (playersList: Player[]) => {
-        console.log('los player list', playersList);
         setPlayers(playersList)
     })
 
@@ -36,12 +35,10 @@ export default function Game() {
     });
 
     socket.on("tick", ({secondsLeft}) =>{
-        console.log('el tiempo pasa y se nos va la vida',secondsLeft)
         setTime(secondsLeft);
     })
     
      socket.on("update_round_state", ({newState,isBetTime,title}) =>{
-        console.log('a',newState, isBetTime)
         setTitle(title);
     })
     return (

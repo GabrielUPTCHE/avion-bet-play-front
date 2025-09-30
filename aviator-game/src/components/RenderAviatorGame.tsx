@@ -2,59 +2,50 @@ import { useEffect, useRef, useState } from "react";
 import { getSocket } from "../utils/socket-service";
 
 interface RoundStartPayload { crashPoint: number; }
-interface PlaneUpdate { multiplier: number; timestamp: number; }
 interface RoundEndPayload { finalMultiplier: number; }
 
-interface RenderAviatorGameProp {
+interface RenderAviatorGameProps {
   isRunning: boolean;
-  setIsRunning: (state:boolean) => void
-  
+  setIsRunning: (state: boolean) => void;
 }
 
-export function RenderAviatorGame({isRunning, setIsRunning}: RenderAviatorGameProp) {
+export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGameProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [multiplier, setMultiplier] = useState(1);
-  const [crashPoint, setCrashPoint] = useState<number | null>(null);
 
-  // posición objetivo (desde servidor)
   const target = useRef({ x: 50, y: 500 });
-  // posición interpolada (animación)
   const position = useRef({ x: 50, y: 500 });
+
+  const startTime = useRef<number | null>(null);
+  const animationFrameId = useRef<number | null>(null);
 
   const socket = getSocket();
 
   useEffect(() => {
     const handleStart = (payload: RoundStartPayload) => {
+      console.log("🎮 Round Start", payload);
       setIsRunning(true);
-      setCrashPoint(payload.crashPoint);
       setMultiplier(1);
       target.current = { x: 50, y: 500 };
       position.current = { x: 50, y: 500 };
-    };
-
-    const handleUpdate = ({multiplier}: PlaneUpdate) => {
-      target.current = {
-        x: target.current.x + 3,
-        y: 500 - multiplier * 10,
-      };
-      setMultiplier(multiplier);
+      startTime.current = performance.now();
     };
 
     const handleEnd = (payload: RoundEndPayload) => {
+      console.log("💥 Round End", payload);
       setIsRunning(false);
       target.current = { x: 50, y: 500 };
+      startTime.current = null;
     };
 
     socket.on("round_start", handleStart);
-    socket.on("plane_update", handleUpdate);
     socket.on("round_end", handleEnd);
 
     return () => {
       socket.off("round_start", handleStart);
-      socket.off("plane_update", handleUpdate);
       socket.off("round_end", handleEnd);
     };
-  }, [socket]);
+  }, [socket, setIsRunning]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -62,51 +53,64 @@ export function RenderAviatorGame({isRunning, setIsRunning}: RenderAviatorGamePr
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    function draw() {
+    function draw(now: number) {
       if (!ctx) return;
-      ctx.clearRect(0, 0, canvas?.width ??0, canvas?.height ??0);
+
+      ctx.clearRect(0, 0, canvas?.width ??0, canvas?.height ?? 0);
 
       // fondo
       ctx.fillStyle = "#87CEEB";
-      ctx.fillRect(0, 0, canvas?.width ??0, canvas?.height ?? 0);
+      ctx.fillRect(0, 0, canvas?.width ?? 0, canvas?.height ?? 0);
 
       // nubes
       drawCloud(ctx, 200, 100);
       drawCloud(ctx, 500, 150);
       drawCloud(ctx, 350, 80);
 
+      if (isRunning && startTime.current !== null) {
+        const elapsed = (now - startTime.current) / 1000; // segundos
+        const newMultiplier = 1 + elapsed * 0.91; // 
+        setMultiplier(Number(newMultiplier.toFixed(1)));
+
+        // actualizar target en base al multiplicador
+        target.current = {
+          x: 50 + elapsed * 30, // velocidad horizontal
+          y: 500 - newMultiplier * 20, // altura
+        };
+      }
+
       // interpolar suavemente
       position.current.x += (target.current.x - position.current.x) * 0.1;
       position.current.y += (target.current.y - position.current.y) * 0.1;
 
-      // avión (triángulo como avión)
+      // avión
       drawPlane(ctx, position.current.x, position.current.y);
 
       // multiplicador
       ctx.fillStyle = "black";
       ctx.font = "24px Arial";
+      ctx.fillText(`${multiplier.toFixed(2)}x`, 20, 30);
 
-      requestAnimationFrame(draw);
+      animationFrameId.current = requestAnimationFrame(draw);
     }
 
-    draw();
-  }, []);
-  useEffect(()=>{
-    console.log('el multiplier', multiplier)
-  },[multiplier])
+    animationFrameId.current = requestAnimationFrame(draw);
+
+    return () => {
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+    };
+  }, [isRunning, multiplier]);
 
   return (
     <div style={{ textAlign: "center" }}>
       <h2>Betplay Aviator clon</h2>
-      <h3>Multiplicador: {multiplier}x</h3>
+      <h3>Multiplicador: {multiplier.toFixed(2)}x</h3>
       <canvas ref={canvasRef} width={800} height={600} />
-      {crashPoint && <p>Crash Point: {crashPoint}x</p>}
     </div>
   );
 }
 
 // -------- helpers --------
-
 function drawPlane(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.fillStyle = "red";
   ctx.beginPath();
