@@ -18,7 +18,9 @@ export default function Game() {
     const actualRound = 0;
     
     const [time, setTime] = useState<number>(0);
-    const [title, setTitle] = useState<string>('');
+    const [title, setTitle] = useState<string>('Prepara tu apuesta');
+    const [isRunning, setIsRunning] = useState(false);
+
 
     const [players, setPlayers] = useState<Player[]>([]);
     const [bets, setBets] = useState<Bet[]>([]);
@@ -30,7 +32,6 @@ export default function Game() {
     })
 
     socket.on("bets_update", (result) => {
-        console.log("cambiaron:", result);
         setBets(result.game_rounds[actualRound].bets)
     });
 
@@ -60,7 +61,10 @@ export default function Game() {
                 </aside>
 
                 <main className="game-board">
-                    <RenderAviatorGame />
+                    <RenderAviatorGame
+                        isRunning={isRunning}
+                        setIsRunning={setIsRunning}
+                    />
                 </main>
 
                 <footer className="player-panel">

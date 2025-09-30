@@ -49,6 +49,7 @@ export function PlayerBetPanel() {
                 thousandSeparator="."
                 decimalSeparator=","
                 prefix="$"
+                disabled={hasBet }
                 onValueChange={(values) => setAmount(values.floatValue ?? null)}
             />
 
