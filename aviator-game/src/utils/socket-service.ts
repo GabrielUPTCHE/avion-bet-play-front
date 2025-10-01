@@ -4,8 +4,9 @@ let socket: Socket | null = null
 
 export const connectSocket = () => {
   if (!socket) {
-    socket = io("http://localhost:4000", {
+    socket = io("http://localhost", {  // Apuntando al balanceador de carga
       autoConnect: false,
+      transports: ['polling', 'websocket']
     })
   }
   return socket
