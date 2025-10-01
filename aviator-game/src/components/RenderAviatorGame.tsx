@@ -21,11 +21,88 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
   const startTime = useRef<number | null>(null);
   const animationFrameId = useRef<number | null>(null);
 
+
+  const [title, setTitle] = useState('')
+  const [countdownFinal, setCountdownFinal] = useState(10)
+  const [countdownInitial, setCountdownInitial] = useState(7)
+
+  const intervalInitialRound = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const intervalEndRound = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
+
+
+
   const socket = getSocket();
+
+  const starFinalCountdown = () => {
+    setTitle("Finalizo la ronda");
+    if (intervalEndRound.current) {
+      clearInterval(intervalEndRound.current);
+    }
+
+    intervalEndRound.current = setInterval(() => {
+      setCountdownFinal((prev) => {
+        if (prev > 0) {
+          return prev - 1;
+        } else {
+          if (intervalEndRound.current) {
+            clearInterval(intervalEndRound.current);
+            intervalEndRound.current = undefined;
+            startInitialCountdown()
+            setTitle("Prepara tu apuesta");
+          }
+          return 0;
+        }
+      });
+    }, 1000);
+  };
+
+  const startInitialCountdown = () => {
+    
+    if (intervalInitialRound.current) {
+      clearInterval(intervalInitialRound.current);
+    }
+
+    intervalInitialRound.current = setInterval(() => {
+      setCountdownInitial((prev) => {
+        if (prev > 0) {
+          return prev - 1;
+        } else {
+          if (intervalInitialRound.current) {
+            clearInterval(intervalInitialRound.current);
+            intervalInitialRound.current = undefined;
+            
+          }
+          return 0;
+        }
+      });
+    }, 1000);
+  };
+
+  const clearIntervals =() =>{
+    clearInterval(intervalInitialRound.current)
+    clearInterval(intervalEndRound.current)
+  }
+
+  const validateInterval =() => {
+    if (title === 'Prepara tu apuesta') {
+      return countdownInitial + 's'
+    }
+    if (title === 'Finalizo la ronda') {
+      return countdownFinal+ 's'
+    }
+    return ''
+  }
+
+  useEffect(()=>{
+  },[countdownFinal, countdownInitial])
+
+
 
   useEffect(() => {
     const handleStart = (payload: RoundStartPayload) => {
-      console.log("🎮 Round Start", payload);
+      clearIntervals()
+      setTitle('Ya empezo la apuesta')
       setIsRunning(true);
       setMultiplier(1);
       target.current = { x: 50, y: 450 };
@@ -33,11 +110,14 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
       startTime.current = performance.now();
     };
 
-    const handleEnd = (payload: RoundEndPayload) => {
-      console.log("💥 Round End", payload);
+    const handleEnd = ({finalMultiplier}: RoundEndPayload) => {
       setIsRunning(false);
       target.current = { x: 50, y: 450 };
       startTime.current = null;
+      setCountdownFinal(10)
+      setCountdownInitial(7)
+      starFinalCountdown()
+      setMultiplier(finalMultiplier)
     };
 
     socket.on("round_start", handleStart);
@@ -54,7 +134,7 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    
+
     function draw(now: number) {
       if (!ctx) return;
 
@@ -85,10 +165,7 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
       // avión
       drawPlane(ctx, position.current.x, position.current.y);
 
-      // multiplicador
-      ctx.fillStyle = "black";
-      ctx.font = "24px Arial";
-      ctx.fillText(`${multiplier.toFixed(2)}x`, 20, 30);
+    
 
       animationFrameId.current = requestAnimationFrame(draw);
     }
@@ -102,9 +179,10 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
 
   return (
     <div className="game-container">
-      <div>
+      <div className="titles-game">
 
-        <h3 className="multiplier">Multiplicador: {multiplier.toFixed(2)}x</h3>
+        <h3 className="time">{validateInterval()} {title}</h3>
+        <h3 className="multiplier">{multiplier.toFixed(2)}x</h3>
       </div>
       <div className="canvas-wrapper">
         <canvas ref={canvasRef} width={900} height={500} />
@@ -122,7 +200,7 @@ function drawPlane(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.fill();
 
   // Cabina
- 
+
 
   // Ala principal
   ctx.fillStyle = "#b71c1c";

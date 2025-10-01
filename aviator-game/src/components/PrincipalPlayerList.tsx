@@ -1,9 +1,9 @@
 import { Typography } from "@mui/material";
-import type { GameSession } from "../models/models";
+import type { Player } from "../models/models";
 import PlayerGameCard from "../shared/Cards/PlayerGameCard";
 
 interface PrincipalBetListProps {
-    gameSessions: GameSession[];
+    gameSessions: Player[];
 }
 
 export default function PrincipalPlayerList({ gameSessions }: PrincipalBetListProps) {
@@ -25,13 +25,13 @@ export default function PrincipalPlayerList({ gameSessions }: PrincipalBetListPr
                     mt: 7,
                 }}
             ></Typography>
-            {gameSessions?.map((gameSession) =>
-                gameSession?.player ? (
+            {gameSessions?.map((player) =>
+                 (
                     <PlayerGameCard
-                        key={gameSession.player.id_player || gameSession.date_ingress}
-                        player={gameSession.player}
+                        key={player.id_player}
+                        player={player}
                     />
-                ) : null
+                ) 
             )}
         </>
     )
