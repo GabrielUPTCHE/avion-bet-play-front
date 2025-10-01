@@ -9,7 +9,13 @@ import { getSocket } from "../utils/socket-service";
 
 import './PlayerBetPanel.css'
 
-export function PlayerBetPanel() {
+
+interface PlayerBetPanelProp {
+    isRunning: boolean;
+    setIsRunning: (state: boolean) => void;
+}
+
+export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
     const [amount, setAmount] = useState<number | null>(null);
     const [hasBet, setHasBet] = useState(false);
     const socket = getSocket();
@@ -32,65 +38,79 @@ export function PlayerBetPanel() {
         setAmount(null);
     };
 
+    const validateButton = () => {
+        if (!hasBet && !isRunning) {
+            return (<Button
+                variant="contained"
+                color="success"
+                disabled={!amount || isRunning}
+                onClick={handleBet}
+            >
+                Apostar
+            </Button>)
+        }
+        if (hasBet && !isRunning) {
+            return (
+                <Button variant="outlined" color="error" disabled={isRunning} onClick={handleCancel}>
+                    Cancelar
+                </Button>
+            )
+        }
+        if (hasBet && isRunning) {
+            return (
+                <Button variant="outlined" color="inherit" onClick={handleCancel}>
+                    Retirar
+                </Button>
+            )
+        }
+
+    }
     return (
         <>
             <div className="section-principal-bet">
                 <div className="section-bet">
-                <Box
-                    sx={{
-                        p: 2,
-                        display: "flex",
-                        gap: 2,
-                        alignItems: "center",
-                    }}
-                >
-                    <NumericFormat
-                        value={amount ?? ""}
-                        customInput={TextField}
-                        label="Monto de apuesta"
-                        variant="outlined"
-                        fullWidth
-                        className="input-bet"
-                        thousandSeparator="."
-                        decimalSeparator=","
-                        prefix="$"
-                        disabled={hasBet}
-                        onValueChange={(values) => setAmount(values.floatValue ?? null)}
-                    />
+                    <Box
+                        sx={{
+                            p: 2,
+                            display: "flex",
+                            gap: 2,
+                            alignItems: "center",
+                        }}
+                    >
+                        <NumericFormat
+                            value={amount ?? ""}
+                            customInput={TextField}
+                            label="Monto de apuesta"
+                            variant="outlined"
+                            fullWidth
+                            className="input-bet"
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            prefix="$"
+                            disabled={hasBet}
+                            onValueChange={(values) => setAmount(values.floatValue ?? null)}
+                        />
 
 
-                </Box>
-            </div>
+                    </Box>
+                </div>
 
-            <div className="section-stats">
-                <div className="stats-container">
-                    <div className="stat-card">
-                        <div className="stat-title">Saldo Total</div>
-                        <div className="stat-value saldo">$10,500.00</div>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-title">Ganancia Última Ronda</div>
-                        <div className="stat-value ganancia">+$1,200.00</div>
+                <div className="section-stats">
+                    <div className="stats-container">
+                        <div className="stat-card">
+                            <div className="stat-title">Saldo Total</div>
+                            <div className="stat-value saldo">$10,500.00</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-title">Ganancia Última Ronda</div>
+                            <div className="stat-value ganancia">+$1,200.00</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            </div>
 
             <div className="section-buttons">
-                {!hasBet ? (
-                    <Button
-                        variant="contained"
-                        color="success"
-                        disabled={!amount}
-                        onClick={handleBet}
-                    >
-                        Apostar
-                    </Button>
-                ) : (
-                    <Button variant="outlined" color="error" onClick={handleCancel}>
-                        Cancelar
-                    </Button>
-                )}
+                {validateButton()}
             </div>
 
         </>
