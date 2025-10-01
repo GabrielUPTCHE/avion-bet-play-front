@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { getSocket } from "../utils/socket-service";
 
+import './RenderAviatorGame.css'
+
 interface RoundStartPayload { crashPoint: number; }
 interface RoundEndPayload { finalMultiplier: number; }
 
@@ -13,8 +15,8 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [multiplier, setMultiplier] = useState(1);
 
-  const target = useRef({ x: 50, y: 500 });
-  const position = useRef({ x: 50, y: 500 });
+  const target = useRef({ x: 50, y: 450 });
+  const position = useRef({ x: 50, y: 450 });
 
   const startTime = useRef<number | null>(null);
   const animationFrameId = useRef<number | null>(null);
@@ -26,15 +28,15 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
       console.log("🎮 Round Start", payload);
       setIsRunning(true);
       setMultiplier(1);
-      target.current = { x: 50, y: 500 };
-      position.current = { x: 50, y: 500 };
+      target.current = { x: 50, y: 450 };
+      position.current = { x: 50, y: 450 };
       startTime.current = performance.now();
     };
 
     const handleEnd = (payload: RoundEndPayload) => {
       console.log("💥 Round End", payload);
       setIsRunning(false);
-      target.current = { x: 50, y: 500 };
+      target.current = { x: 50, y: 450 };
       startTime.current = null;
     };
 
@@ -52,11 +54,11 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
+    
     function draw(now: number) {
       if (!ctx) return;
 
-      ctx.clearRect(0, 0, canvas?.width ??0, canvas?.height ?? 0);
+      ctx.clearRect(0, 0, canvas?.width ?? 0, canvas?.height ?? 0);
 
       ctx.fillStyle = "#87CEEB";
       ctx.fillRect(0, 0, canvas?.width ?? 0, canvas?.height ?? 0);
@@ -66,13 +68,13 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
       drawCloud(ctx, 350, 80);
 
       if (isRunning && startTime.current !== null) {
-        const elapsed = (now - startTime.current) / 1000; 
+        const elapsed = (now - startTime.current) / 1000;
         const newMultiplier = 1 + elapsed * 0.91;
         setMultiplier(Number(newMultiplier.toFixed(1)));
 
         target.current = {
-          x: 50 + elapsed * 30, 
-          y: 500 - newMultiplier * 20, 
+          x: 50 + elapsed * 30,
+          y: 450 - newMultiplier * 20,
         };
       }
 
@@ -99,28 +101,59 @@ export function RenderAviatorGame({ isRunning, setIsRunning }: RenderAviatorGame
   }, [isRunning, multiplier]);
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h2>Betplay Aviator clon</h2>
-      <h3>Multiplicador: {multiplier.toFixed(2)}x</h3>
-      <canvas ref={canvasRef} width={800} height={600} />
+    <div className="game-container">
+      <div>
+
+        <h3 className="multiplier">Multiplicador: {multiplier.toFixed(2)}x</h3>
+      </div>
+      <div className="canvas-wrapper">
+        <canvas ref={canvasRef} width={900} height={500} />
+      </div>
     </div>
   );
 }
 
 // -------- helpers --------
 function drawPlane(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  ctx.fillStyle = "red";
+  // Fuselaje (cuerpo principal)
+  ctx.fillStyle = "#d32f2f"; // rojo elegante
   ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x - 40, y + 15);
-  ctx.lineTo(x - 40, y - 15);
+  ctx.ellipse(x, y, 40, 12, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Cabina
+ 
+
+  // Ala principal
+  ctx.fillStyle = "#b71c1c";
+  ctx.beginPath();
+  ctx.moveTo(x - 5, y);
+  ctx.lineTo(x - 35, y - 20);
+  ctx.lineTo(x - 25, y);
+  ctx.lineTo(x - 35, y + 20);
   ctx.closePath();
   ctx.fill();
 
-  // alas
-  ctx.fillStyle = "darkred";
-  ctx.fillRect(x - 25, y - 5, 15, 10);
+  // Cola vertical
+  ctx.fillStyle = "#9a0007";
+  ctx.beginPath();
+  ctx.moveTo(x - 38, y - 5);
+  ctx.lineTo(x - 55, y - 15);
+  ctx.lineTo(x - 38, y + 5);
+  ctx.closePath();
+  ctx.fill();
+
+  // Cola horizontal
+  ctx.fillStyle = "#7f0000";
+  ctx.fillRect(x - 48, y - 3, 12, 6);
+
+  // Detalle nariz
+  ctx.fillStyle = "#ffebee";
+  ctx.beginPath();
+  ctx.arc(x + 40, y, 6, 0, Math.PI * 2);
+  ctx.fill();
 }
+
 
 function drawCloud(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.fillStyle = "white";
