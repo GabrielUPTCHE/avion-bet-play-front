@@ -1,0 +1,85 @@
+.bet-card {
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.bet-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+  border-color: #4cafef;
+}
+
+.bet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bet-player {
+  font-weight: bold;
+  font-size: 15px;
+  color: #fff;
+}
+
+.bet-date {
+  font-size: 11px;
+  color: #888;
+}
+
+.bet-body {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bet-amount {
+  font-size: 16px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.bet-multiplier {
+  background: #242424;
+  color: #fbc02d;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #555;
+}
+
+
+.bet-card-lose {
+  display: flex;
+  flex-direction: column;
+  /* background: #7a2121; */
+  background: #7B2D26;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+
+.bet-card-win {
+  display: flex;
+  flex-direction: column;
+/*   background: #1b4b27; */
+  background: #1E5631;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}

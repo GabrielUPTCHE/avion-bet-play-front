@@ -8,7 +8,7 @@ export default function Login() {
   const [error, setError] = useState("")
 
   const handleLogin = async () => {
-    if (!username.trim()) {
+    /* if (!username.trim()) {
       setError("El nombre de usuario es obligatorio")
       return
     }
@@ -24,7 +24,7 @@ export default function Login() {
       if (!data.success) {
         setError("El usuario no existe")
         return
-      }
+      } */
 
       // si es válido → conectar socket
       const socket = connectSocket()
@@ -37,10 +37,10 @@ export default function Login() {
       localStorage.setItem("username", username)
 
       navigate("/game")
-    } catch (err) {
+    /* } catch (err) {
       console.error("Error validando usuario:", err)
       setError("Error de conexión con el servidor")
-    }
+    } */
   }
 
   return (

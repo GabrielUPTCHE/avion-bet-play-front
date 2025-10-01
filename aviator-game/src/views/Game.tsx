@@ -22,8 +22,191 @@ export default function Game() {
     const [isRunning, setIsRunning] = useState(false);
 
 
-    const [players, setPlayers] = useState<GameSession[]>([]);
-    const [bets, setBets] = useState<Bet[]>([]);
+    const [players, setPlayers] = useState<GameSession[]>([
+        {
+            player:{
+                id_player:'1',
+                register_date:null,
+                username: 'Gabriel'
+            },
+            date_exit:null,
+            date_ingress: 'null'
+        },
+        {
+            player:{
+                id_player:'2',
+                register_date:null,
+                username: 'Daniel'
+            },
+            date_exit:null,
+            date_ingress: 'null'
+        },
+        {
+            player:{
+                id_player:'3',
+                register_date:null,
+                username: 'Deivid'
+            },
+            date_exit:null,
+            date_ingress: 'null'
+        },
+        {
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            },
+            date_exit:null,
+            date_ingress: 'null'
+        }
+    ]);
+    const [bets, setBets] = useState<Bet[]>([
+
+        {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1.2,
+            id_bet:'1',
+            player:{
+                id_player:'1',
+                register_date:null,
+                username: 'Gabriel'
+            }
+        },
+        {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1.2,
+            id_bet:'1',
+            player:{
+                id_player:'2',
+                register_date:null,
+                username: 'Daniel'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:0,
+            id_bet:'1',
+            player:{
+                id_player:'3',
+                register_date:null,
+                username: 'Deivid'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+         {
+            amount:1000,
+            date_bet:new Date().toString(),
+            ganancy:0,
+            multiplyer:1,
+            id_bet:'1',
+            player:{
+                id_player:'4',
+                register_date:null,
+                username: 'Edison'
+            }
+        },
+    ]);
     
 
     socket.on("players_update", (playersList: GameSession[]) => {
@@ -44,7 +227,7 @@ export default function Game() {
     })
     return (
         <>
-            <h1>{time}         {title}</h1>
+            
             <div className="game-layout">
 
                 <section className="player-list">
