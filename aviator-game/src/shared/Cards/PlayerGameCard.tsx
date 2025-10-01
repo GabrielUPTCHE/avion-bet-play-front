@@ -7,14 +7,16 @@ interface PlayerGameCardProps {
 }
 
 export default function PlayerGameCard({player}: PlayerGameCardProps) {
+    if (!player) return null;
+
     return (
         <>
             <div className="player-card">
                 <img src="https://i.pravatar.cc/45" alt="avatar" className="player-avatar"/>
-                    <div className="player-info">
-                        <span className="player-name">{player.username}</span>
-                        <span className="player-id">ID: {player.id_player}</span>
-                    </div>
+                <div className="player-info">
+                    <span className="player-name">{player.username || 'Anónimo'}</span>
+                    <span className="player-id">ID: {player.id_player || 'N/A'}</span>
+                </div>
             </div>
 
         </>

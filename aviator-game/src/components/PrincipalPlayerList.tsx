@@ -9,12 +9,14 @@ export default function PrincipalPlayerList({ gameSessions }: PrincipalBetListPr
     console.log('el game session', gameSessions)
     return (
         <>
-            {gameSessions.map((gameSession) =>( 
-                <PlayerGameCard
-                    player={gameSession.player}
-                />
-            ))
-            }
+            {gameSessions?.map((gameSession) => 
+                gameSession?.player ? (
+                    <PlayerGameCard
+                        key={gameSession.player.id_player || gameSession.date_ingress}
+                        player={gameSession.player}
+                    />
+                ) : null
+            )}
         </>
     )
 }
