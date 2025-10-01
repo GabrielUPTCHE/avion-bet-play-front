@@ -9,7 +9,13 @@ import { getSocket } from "../utils/socket-service";
 
 import './PlayerBetPanel.css'
 
-export function PlayerBetPanel() {
+
+interface PlayerBetPanelProp {
+    isRunning: boolean;
+    setIsRunning: (state: boolean) => void;
+}
+
+export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
     const [amount, setAmount] = useState<number | null>(null);
     const [hasBet, setHasBet] = useState(false);
     const [lastProfit, setLastProfit] = useState<number>(0);
@@ -130,6 +136,33 @@ export function PlayerBetPanel() {
         }).format(value);
     };
 
+    const validateButton = () => {
+        if (!hasBet && !isRunning) {
+            return (<Button
+                variant="contained"
+                color="success"
+                disabled={!amount || isRunning}
+                onClick={handleBet}
+            >
+                Apostar
+            </Button>)
+        }
+        if (hasBet && !isRunning) {
+            return (
+                <Button variant="outlined" color="error" disabled={isRunning} onClick={handleCancel}>
+                    Cancelar
+                </Button>
+            )
+        }
+        if (hasBet && isRunning) {
+            return (
+                <Button variant="outlined" color="inherit" onClick={handleCancel}>
+                    Retirar
+                </Button>
+            )
+        }
+
+    }
     return (
         <>
             <div className="section-principal-bet">
