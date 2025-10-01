@@ -9,19 +9,18 @@ import { getSocket } from "../utils/socket-service";
 
 import './PlayerBetPanel.css'
 
-
 interface PlayerBetPanelProp {
     isRunning: boolean;
     setIsRunning: (state: boolean) => void;
 }
 
-export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
+export function PlayerBetPanel({ isRunning, setIsRunning }: PlayerBetPanelProp) {
     const [amount, setAmount] = useState<number | null>(null);
     const [hasBet, setHasBet] = useState(false);
     const [lastProfit, setLastProfit] = useState<number>(0);
     const [totalBalance, setTotalBalance] = useState<number>(10500);
     const [currentBetAmount, setCurrentBetAmount] = useState<number>(0);
-    const [isRunning, setIsRunning] = useState(false); // Estado para saber si la ronda está activa
+    // ❌ ELIMINADO: const [isRunning, setIsRunning] = useState(false);
     
     const socket = getSocket();
 
@@ -31,13 +30,13 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
         // Escuchar cuando inicia la ronda
         const handleRoundStart = () => {
             console.log("🎮 Ronda iniciada");
-            setIsRunning(true);
+            setIsRunning(true); // Usa el setIsRunning del prop
         };
 
         // Escuchar cuando termina la ronda
         const handleRoundEnd = (payload: any) => {
             console.log("💰 Round End recibido:", payload);
-            setIsRunning(false);
+            setIsRunning(false); // Usa el setIsRunning del prop
             
             const { playerEarnings } = payload;
             
@@ -49,14 +48,8 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
                 
                 if (myEarnings) {
                     console.log("✅ Mis ganancias:", myEarnings);
-                    
-                    // Actualizar la última ganancia/pérdida
                     setLastProfit(myEarnings.profit);
-                    
-                    // Actualizar el saldo total
                     setTotalBalance(prev => prev + myEarnings.profit);
-                    
-                    // Resetear la apuesta
                     setHasBet(false);
                     setCurrentBetAmount(0);
                 } else {
@@ -74,14 +67,8 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
         // Escuchar cash out exitoso
         const handleCashOutSuccess = (data: any) => {
             console.log("💵 Cash out exitoso:", data);
-            
-            // Actualizar la última ganancia
             setLastProfit(data.profit);
-            
-            // Actualizar el saldo total
             setTotalBalance(prev => prev + data.profit);
-            
-            // Resetear la apuesta
             setHasBet(false);
             setCurrentBetAmount(0);
         };
@@ -97,7 +84,7 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
             socket.off("bet_confirmed", handleBetConfirmed);
             socket.off("cash_out_success", handleCashOutSuccess);
         };
-    }, [socket]);
+    }, [socket, setIsRunning]);
 
     const handleBet = () => {
         if (!socket || !amount) return;
@@ -112,8 +99,6 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
     const handleCancel = () => {
         if (!socket) return;
         
-        // Si hay una ronda activa, hacer cash out
-        // Si no, cancelar la apuesta antes de que inicie
         if (isRunning) {
             console.log('💵 Retirando ganancia:', socket.id);
             socket.emit("cash_out", { id_player: socket.id });
@@ -127,7 +112,6 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
         setCurrentBetAmount(0);
     };
 
-    // Función auxiliar para formatear moneda
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('es-CO', {
             style: 'currency',
@@ -136,33 +120,6 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
         }).format(value);
     };
 
-    const validateButton = () => {
-        if (!hasBet && !isRunning) {
-            return (<Button
-                variant="contained"
-                color="success"
-                disabled={!amount || isRunning}
-                onClick={handleBet}
-            >
-                Apostar
-            </Button>)
-        }
-        if (hasBet && !isRunning) {
-            return (
-                <Button variant="outlined" color="error" disabled={isRunning} onClick={handleCancel}>
-                    Cancelar
-                </Button>
-            )
-        }
-        if (hasBet && isRunning) {
-            return (
-                <Button variant="outlined" color="inherit" onClick={handleCancel}>
-                    Retirar
-                </Button>
-            )
-        }
-
-    }
     return (
         <>
             <div className="section-principal-bet">
@@ -185,7 +142,7 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
                             thousandSeparator="."
                             decimalSeparator=","
                             prefix="$"
-                            disabled={hasBet}
+                            disabled={hasBet || isRunning}
                             onValueChange={(values) => setAmount(values.floatValue ?? null)}
                         />
                     </Box>
@@ -233,7 +190,7 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
                     <Button
                         variant="contained"
                         color="success"
-                        disabled={!amount}
+                        disabled={!amount || isRunning}
                         onClick={handleBet}
                     >
                         Apostar
@@ -241,7 +198,7 @@ export function PlayerBetPanel({ isRunning }: PlayerBetPanelProp) {
                 ) : (
                     <Button 
                         variant="outlined" 
-                        color="error" 
+                        color={isRunning ? "inherit" : "error"}
                         onClick={handleCancel}
                     >
                         {isRunning ? 'Retirar' : 'Cancelar'}

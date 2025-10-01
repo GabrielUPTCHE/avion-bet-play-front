@@ -2,6 +2,7 @@ export interface Player {
     id_player: string | null;
     username: string | null;
     register_date: string | null;
+    remaining_money?: number | null; // Dinero restante disponible
 }
 
 export interface GameSession {

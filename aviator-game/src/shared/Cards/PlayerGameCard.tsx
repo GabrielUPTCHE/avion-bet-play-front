@@ -16,6 +16,7 @@ export default function PlayerGameCard({player}: PlayerGameCardProps) {
                 <div className="player-info">
                     <span className="player-name">{player.username || 'Anónimo'}</span>
                     <span className="player-id">ID: {player.id_player || 'N/A'}</span>
+                    <span className="player-balance">Saldo: ${player.remaining_money != null ? player.remaining_money.toFixed(2) : 'N/A'}</span>
                 </div>
             </div>
 
