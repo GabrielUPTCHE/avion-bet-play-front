@@ -27,14 +27,12 @@ export default function Game() {
     const [bets, setBets] = useState<Bet[]>([]);
     
 
-    socket.on("players_update", (playersList: GameSession[]) => {
+    socket.on("players_update", (playersList: Player[]) => {
         setPlayers(playersList)
-        console.log('los jugadores', playersList)
     })
 
     socket.on("bets_update", (result) => {
-        console.log('se actualizaron ...', result)
-        setBets(result.game_rounds[actualRound].bets)
+            setBets(result.game_rounds[actualRound].bets)
     });
 
     socket.on("tick", ({secondsLeft}) =>{
@@ -44,6 +42,37 @@ export default function Game() {
      socket.on("update_round_state", ({newState,isBetTime,title}) =>{
         setTitle(title);
     })
+
+    socket.on("connect_error", (err) => {
+        console.error("❌ Error de conexión:", err.message);
+    });
+
+    socket.on("connect", (err) => {
+        console.error("hizo el connect:", err.message);
+        socket.emit("join_game", {
+            username:localStorage.getItem("username")??'notuser',
+            register_date: new Date().toISOString(),
+        })
+        
+
+        navigate("/game")
+    });
+
+    //intenta reconectar
+
+    socket.io.on("reconnect_attempt", (result) => {
+      console.log('hace esta joda 1', result)
+    });
+    
+    socket.io.on("reconnect", (result) => {
+        setIsReconnecting(false);
+        console.log('hace esta joda 2', result)
+    });
+    
+    socket.io.on("reconnect_failed", (result) => {
+        setIsReconnecting(false);
+        console.log('hace esta joda 3', result)
+    });
     return (
         <>
             
