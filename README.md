@@ -18,7 +18,7 @@ npm install
 
 2. Configurar conexión al backend:
 
-Modificar el archivo `src/utils/socket-service.ts` y actualizar la URL del socket según donde esté alojado tu backend:
+Modificar el archivo `src/environment/environment.ts` y actualizar la URL del socket según donde esté alojado tu backend:
 
 ```typescript
 // src/environment/environment.ts
