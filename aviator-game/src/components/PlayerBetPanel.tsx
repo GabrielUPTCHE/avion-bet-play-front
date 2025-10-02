@@ -29,13 +29,11 @@ export function PlayerBetPanel({ isRunning, setIsRunning }: PlayerBetPanelProp) 
 
         // Escuchar cuando inicia la ronda
         const handleRoundStart = () => {
-            console.log("🎮 Ronda iniciada");
             setIsRunning(true); // Usa el setIsRunning del prop
         };
 
         // Escuchar cuando termina la ronda
         const handleRoundEnd = (payload: any) => {
-            console.log("💰 Round End recibido:", payload);
             setIsRunning(false); // Usa el setIsRunning del prop
             
             const { playerEarnings } = payload;
@@ -47,7 +45,6 @@ export function PlayerBetPanel({ isRunning, setIsRunning }: PlayerBetPanelProp) 
                 );
                 
                 if (myEarnings) {
-                    console.log("✅ Mis ganancias:", myEarnings);
                     setLastProfit(myEarnings.profit);
                     setTotalBalance(prev => prev + myEarnings.profit);
                     setHasBet(false);
@@ -60,13 +57,11 @@ export function PlayerBetPanel({ isRunning, setIsRunning }: PlayerBetPanelProp) 
 
         // Escuchar confirmación de apuesta
         const handleBetConfirmed = (data: any) => {
-            console.log("✅ Apuesta confirmada:", data);
             setCurrentBetAmount(data.amount);
         };
 
         // Escuchar cash out exitoso
         const handleCashOutSuccess = (data: any) => {
-            console.log("💵 Cash out exitoso:", data);
             setLastProfit(data.profit);
             setTotalBalance(prev => prev + data.profit);
             setHasBet(false);
@@ -88,7 +83,6 @@ export function PlayerBetPanel({ isRunning, setIsRunning }: PlayerBetPanelProp) 
 
     const handleBet = () => {
         if (!socket || !amount) return;
-        console.log('emitiendo apuesta', { id: socket.id, amount });
         socket.emit("new_bet", {
             id: socket.id,
             amount,
@@ -100,10 +94,8 @@ export function PlayerBetPanel({ isRunning, setIsRunning }: PlayerBetPanelProp) 
         if (!socket) return;
         
         if (isRunning) {
-            console.log('💵 Retirando ganancia:', socket.id);
             socket.emit("cash_out", { id_player: socket.id });
         } else {
-            console.log('❌ Cancelando apuesta:', socket.id);
             socket.emit("cancel_bet", { id_player: socket.id });
         }
         

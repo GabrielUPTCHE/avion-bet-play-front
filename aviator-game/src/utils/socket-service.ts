@@ -1,10 +1,12 @@
 import { io, Socket } from "socket.io-client"
+import { enviroments } from "../environment/environment"
 
 let socket: Socket | null = null
 
 export const connectSocket = () => {
   if (!socket) {
-    socket = io("http://localhost", {  // Apuntando al balanceador de carga
+    
+    socket = io(`http://${enviroments.ipClient}`, {  // Apuntando al balanceador de carga
       autoConnect: false,
       transports: ['websocket', 'polling'],
       reconnection: true,
