@@ -21,11 +21,10 @@ npm install
 Modificar el archivo `src/utils/socket-service.ts` y actualizar la URL del socket según donde esté alojado tu backend:
 
 ```typescript
-// src/utils/socket-service.ts
-socket = io("http://TU_IP_BACKEND", {
-  autoConnect: false,
-  transports: ['polling', 'websocket']
-})
+// src/environment/environment.ts
+export const enviroments = {
+    ipClient:'TU_IP_BACKEND'
+}
 ```
 
 Ejemplos de configuración:
@@ -60,7 +59,8 @@ aviator-game/
 
 ## Funcionalidades Principales
 
-- Inicio de sesión con nombre de usuario
+- Inicio de sesión con nombre de usuario: debe iniciarse sesión con uno de los 3 jugadores establecidos en el campo "Ingresa tu nombre", estos jugadores son Gabriel, Edinson y Deivid.
+
 - Visualización del juego en tiempo real
 - Panel de apuestas
 - Lista de jugadores activos
